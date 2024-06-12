@@ -1,6 +1,7 @@
 package com.tugalsan.api.servlet.upload.server;
 
 import com.tugalsan.api.callable.client.TGS_CallableType3;
+import com.tugalsan.api.url.client.TGS_Url;
 import java.nio.file.Path;
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,14 +11,12 @@ public class TS_SUploadUtils {
         TS_SUploadWebServlet.SYNC = new TS_LibFileUploadExecutor(target_by_profile_and_filename_and_request);
     }
 
-    public static String url(HttpServletRequest request) {
-        StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
-        String queryString = request.getQueryString();
-
+    public static TGS_Url url(HttpServletRequest request) {
+        var requestURL = new StringBuilder(request.getRequestURL().toString());
+        var queryString = request.getQueryString();
         if (queryString == null) {
-            return requestURL.toString();
-        } else {
-            return requestURL.append('?').append(queryString).toString();
+            return TGS_Url.of(requestURL.toString());
         }
+        return TGS_Url.of(requestURL.append('?').append(queryString).toString());
     }
 }
