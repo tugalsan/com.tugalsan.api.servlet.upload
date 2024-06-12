@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 
 public class TS_SUploadUtils {
 
-    public static void bind(TGS_CallableType3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request) {
-        TS_SUploadWebServlet.SYNC = new TS_LibFileUploadExecutor(target_by_profile_and_filename_and_request);
+    public static void bind(TGS_CallableType3<Path, String, String, HttpServletRequest> target_by_formField_and_fileName_and_request) {
+        TS_SUploadWebServlet.SYNC = new TS_LibFileUploadExecutor(target_by_formField_and_fileName_and_request);
     }
 
     public static TGS_Url url(HttpServletRequest request) {
