@@ -1,0 +1,78 @@
+package com.tugalsan.api.servlet.upload.server;
+
+import javax.servlet.http.*;
+import com.tugalsan.api.log.server.*;
+import com.tugalsan.api.servlet.upload.client.TGS_SUploadUtils;
+import com.tugalsan.api.thread.server.async.TS_ThreadAsyncAwait;
+import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
+import com.tugalsan.api.unsafe.client.*;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
+
+@WebServlet("/" + TGS_SUploadUtils.LOC_NAME)//AS IN "/uplıad"
+@MultipartConfig(//for TS_LibFileUploadUtils.upload that uses Apache.commons
+        fileSizeThreshold = 1024 * 1024 * TGS_SUploadWebServlet.UPLOAD_MB_LIMIT_MEMORY,
+        maxFileSize = 1024 * 1024 * TGS_SUploadWebServlet.UPLOAD_MB_LIMIT_FILE,
+        maxRequestSize = 1024 * 1024 * TGS_SUploadWebServlet.UPLOAD_MB_LIMIT_REQUESTBALL,
+        location = "/" + TGS_SUploadUtils.LOC_NAME//means C:/bin/tomcat/home/work/Catalina/localhost/spi-xxx/upload (do create it)
+)
+/*
+String appPath = request.getServletContext().getRealPath("");
+// constructs path of the directory to save uploaded file
+String savePath = appPath + File.separator + SAVE_DIR;
+
+// creates the save directory if it does not exists
+File fileSaveDir = new File(savePath);
+if (!fileSaveDir.exists()) {
+        fileSaveDir.mkdir();
+}
+ */
+public class TGS_SUploadWebServlet extends HttpServlet {
+
+    final public static int UPLOAD_MB_LIMIT_MEMORY = 10;
+    final public static int UPLOAD_MB_LIMIT_FILE = 25;
+    final public static int UPLOAD_MB_LIMIT_REQUESTBALL = 50;
+    final private static TS_Log d = TS_Log.of(false, TGS_SUploadWebServlet.class);
+    public static volatile TS_ThreadSyncTrigger killTrigger = null;
+    public static volatile TGS_SUploadConfig config = TGS_SUploadConfig.of();
+
+    @Override
+    public void doGet(HttpServletRequest rq, HttpServletResponse rs) {
+        call(this, rq, rs);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest rq, HttpServletResponse rs) {
+        call(this, rq, rs);
+    }
+
+    public static void call(HttpServlet servlet, HttpServletRequest rq, HttpServletResponse rs) {
+        TGS_UnSafe.run(() -> {
+            var servletPack = TGS_SUploadExecutorList.SYNC;
+            if (servletPack != null) {
+                if (config.enableTimeout) {
+                    var await = TS_ThreadAsyncAwait.runUntil(killTrigger, servletPack.timeout(), exe -> {
+                        TGS_UnSafe.run(() -> {
+                            servletPack.run(servlet, rq, rs);
+                        }, e -> d.ct("call.await", e));
+                    });
+                    if (await.timeout()) {
+                        var errMsg = "ERROR(AWAIT) timeout";
+                        d.ce("call", errMsg);
+                        return;
+                    }
+                    if (await.hasError()) {
+                        d.ce("call", "ERROR(AWAIT)", await.exceptionIfFailed.get().getMessage());
+                        return;
+                    }
+                } else {
+                    TGS_UnSafe.run(() -> {
+                        servletPack.run(servlet, rq, rs);
+                    }, e -> d.ct("call", e));
+                }
+                d.ci("call", "executed", "config.enableTimeout", config.enableTimeout);
+                return;
+            }
+        }, e -> d.ct("call", e));
+    }
+}
