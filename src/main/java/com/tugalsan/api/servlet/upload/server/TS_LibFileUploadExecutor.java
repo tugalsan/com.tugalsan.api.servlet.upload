@@ -1,6 +1,6 @@
 package com.tugalsan.api.servlet.upload.server;
 
-import com.tugalsan.api.callable.client.TGS_CallableType2;
+import com.tugalsan.api.callable.client.TGS_CallableType3;
 import com.tugalsan.api.file.server.TS_DirectoryUtils;
 import com.tugalsan.api.file.server.TS_FileUtils;
 import com.tugalsan.api.log.server.*;
@@ -19,10 +19,10 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
 
     final private static TS_Log d = TS_Log.of(true, TS_LibFileUploadExecutor.class);
 
-    protected TS_LibFileUploadExecutor(TGS_CallableType2<Path, String, String> target_by_profile_and_filename) {
-        this.target_by_profile_and_filename = target_by_profile_and_filename;
+    protected TS_LibFileUploadExecutor(TGS_CallableType3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request) {
+        this.target_by_profile_and_filename_and_request = target_by_profile_and_filename_and_request;
     }
-    final public TGS_CallableType2<Path, String, String> target_by_profile_and_filename;
+    final public TGS_CallableType3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request;
 
     @WebListener
     public static class ApacheFileCleanerCleanup extends FileCleanerCleanup {
@@ -112,14 +112,12 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
             d.ci("run", "sourceFileName", sourceFileName);
 
             //COMPILING TARGET FILE
-            var targetFileCompiled = target_by_profile_and_filename.call(profileValue, sourceFileName);
-            d.ci("run", "targetFileCompiled", targetFileCompiled, "profileValue", profileValue, "sourceFileName", sourceFileName);
-            if (targetFileCompiled == null) {
+            var targetFile = target_by_profile_and_filename_and_request.call(profileValue, sourceFileName, rq);
+            d.ci("run", "targetFile", targetFile, "profileValue", profileValue, "sourceFileName", sourceFileName);
+            if (targetFile == null) {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_TARGETCOMPILED_NULL());
                 return;
             }
-            var targetFile = targetFileCompiled;
-            d.ci("run", "targetFile", targetFile);
 
             //ALREADY EXISTS?
             if (TS_FileUtils.isExistFile(targetFile)) {
