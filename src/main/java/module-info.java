@@ -1,5 +1,6 @@
 module com.tugalsan.api.servlet.upload {
     requires javax.servlet.api;
+    requires commons.fileupload;
     requires com.tugalsan.api.runnable;
     requires com.tugalsan.api.callable;
     requires com.tugalsan.api.log;
@@ -10,6 +11,7 @@ module com.tugalsan.api.servlet.upload {
     requires com.tugalsan.api.file.json;
     requires com.tugalsan.api.file.txt;
     requires com.tugalsan.api.unsafe;
+    requires com.tugalsan.api.stream;
     requires com.tugalsan.api.tomcat;
     exports com.tugalsan.api.servlet.upload.client;
     exports com.tugalsan.api.servlet.upload.server;
