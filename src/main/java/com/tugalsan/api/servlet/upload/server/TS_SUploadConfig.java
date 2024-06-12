@@ -10,25 +10,25 @@ import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Properties;
 
-public class TGS_SUploadConfig implements Serializable {
+public class TS_SUploadConfig implements Serializable {
 
-    final private static TS_Log d = TS_Log.of(TGS_SUploadConfig.class);
+    final private static TS_Log d = TS_Log.of(TS_SUploadConfig.class);
     final private static boolean DEFAULT_ENABLE_TIMEOUT = true;
 
-    private TGS_SUploadConfig() {//DTO
+    private TS_SUploadConfig() {//DTO
     }
 
-    private TGS_SUploadConfig(boolean enableTimeout) {
+    private TS_SUploadConfig(boolean enableTimeout) {
         this.enableTimeout = enableTimeout;
     }
     public boolean enableTimeout;
 
-    public static TGS_SUploadConfig of() {
-        return new TGS_SUploadConfig(DEFAULT_ENABLE_TIMEOUT);
+    public static TS_SUploadConfig of() {
+        return new TS_SUploadConfig(DEFAULT_ENABLE_TIMEOUT);
     }
 
-    public static TGS_SUploadConfig of(boolean enableTimeout) {
-        return new TGS_SUploadConfig(enableTimeout);
+    public static TS_SUploadConfig of(boolean enableTimeout) {
+        return new TS_SUploadConfig(enableTimeout);
     }
 
     @Override
@@ -48,13 +48,13 @@ public class TGS_SUploadConfig implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final TGS_SUploadConfig other = (TGS_SUploadConfig) obj;
+        final TS_SUploadConfig other = (TS_SUploadConfig) obj;
         return this.enableTimeout == other.enableTimeout;
     }
 
     @Override
     public String toString() {
-        return TGS_SUploadConfig.class.getSimpleName() + "{" + "enableTimeout=" + enableTimeout + '}';
+        return TS_SUploadConfig.class.getSimpleName() + "{" + "enableTimeout=" + enableTimeout + '}';
     }
 
     public Properties toProps() {
@@ -67,14 +67,14 @@ public class TGS_SUploadConfig implements Serializable {
         enableTimeout = (Boolean) prop.getOrDefault("enableTimeout", enableTimeout);
     }
 
-    public static TGS_SUploadConfig of(Path dir, String appName) {
+    public static TS_SUploadConfig of(Path dir, String appName) {
         TS_DirectoryUtils.assureExists(dir);
-        var filePath = dir.resolve(TGS_SUploadConfig.class.getSimpleName() + "." + appName + ".json");
+        var filePath = dir.resolve(TS_SUploadConfig.class.getSimpleName() + "." + appName + ".json");
         d.cr("of", filePath);
 
         if (!TS_FileUtils.isExistFile(filePath)) {
             TS_DirectoryUtils.createDirectoriesIfNotExists(filePath.getParent());
-            var tmp = TGS_SUploadConfig.of();
+            var tmp = TS_SUploadConfig.of();
             var jsonString = TS_FileJsonUtils.toJSON(tmp, true);
             TS_FileJsonUtils.toFile(jsonString, filePath, false, true);
         }
@@ -82,13 +82,13 @@ public class TGS_SUploadConfig implements Serializable {
         var jsonString = TGS_UnSafe.call(() -> TS_FileTxtUtils.toString(filePath), e -> {
             d.ct("of", e);
             d.cr("of", "writing default file");
-            var tmp = TGS_SUploadConfig.of();
+            var tmp = TS_SUploadConfig.of();
             var jsonString0 = TS_FileJsonUtils.toJSON(tmp, true);
             TS_FileTxtUtils.toFile(jsonString0, filePath, false);
             return jsonString0;
         });
         d.ci("of", jsonString);
 
-        return TS_FileJsonUtils.toObject(jsonString, TGS_SUploadConfig.class);
+        return TS_FileJsonUtils.toObject(jsonString, TS_SUploadConfig.class);
     }
 }

@@ -6,9 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-abstract public class TGS_SUploadExecutor implements TGS_RunnableType3<HttpServlet, HttpServletRequest, HttpServletResponse> {
-
-    abstract public String name();
+abstract public class TS_SUploadExecutor implements TGS_RunnableType3<HttpServlet, HttpServletRequest, HttpServletResponse> {
 
     public Duration timeout() {
         return Duration.ofMinutes(1);
