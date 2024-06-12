@@ -10,7 +10,7 @@ import java.io.File;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 
-@WebServlet("/" + TGS_SUploadUtils.LOC_NAME)//AS IN "/uplıad"
+@WebServlet("/" + TGS_SUploadUtils.LOC_NAME)//AS IN "/u"
 @MultipartConfig(//for TS_LibFileUploadUtils.upload that uses Apache.commons
         fileSizeThreshold = 1024 * 1024 * TS_SUploadWebServlet.UPLOAD_MB_LIMIT_MEMORY,
         maxFileSize = 1024 * 1024 * TS_SUploadWebServlet.UPLOAD_MB_LIMIT_FILE,
