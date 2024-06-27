@@ -1,6 +1,6 @@
 package com.tugalsan.api.servlet.upload.server;
 
-import com.tugalsan.api.callable.client.TGS_CallableType3;
+import com.tugalsan.api.function.client.TGS_Func_OutTyped_In3;
 import com.tugalsan.api.file.server.TS_DirectoryUtils;
 import com.tugalsan.api.file.server.TS_FileUtils;
 import com.tugalsan.api.log.server.*;
@@ -19,10 +19,10 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
 
     final private static TS_Log d = TS_Log.of(true, TS_LibFileUploadExecutor.class);
 
-    protected TS_LibFileUploadExecutor(TGS_CallableType3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request) {
+    protected TS_LibFileUploadExecutor(TGS_Func_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request) {
         this.target_by_profile_and_filename_and_request = target_by_profile_and_filename_and_request;
     }
-    final public TGS_CallableType3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request;
+    final public TGS_Func_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request;
 
     @WebListener
     public static class ApacheFileCleanerCleanup extends FileCleanerCleanup {

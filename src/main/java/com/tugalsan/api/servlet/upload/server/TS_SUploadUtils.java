@@ -1,13 +1,13 @@
 package com.tugalsan.api.servlet.upload.server;
 
-import com.tugalsan.api.callable.client.TGS_CallableType3;
+import com.tugalsan.api.function.client.TGS_Func_OutTyped_In3;
 import com.tugalsan.api.url.client.TGS_Url;
 import java.nio.file.Path;
 import javax.servlet.http.HttpServletRequest;
 
 public class TS_SUploadUtils {
 
-    public static void bind(TGS_CallableType3<Path, String, String, HttpServletRequest> target_by_formField_and_fileName_and_request) {
+    public static void bind(TGS_Func_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_formField_and_fileName_and_request) {
         TS_SUploadWebServlet.SYNC = new TS_LibFileUploadExecutor(target_by_formField_and_fileName_and_request);
     }
 
