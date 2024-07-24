@@ -3,9 +3,9 @@ package com.tugalsan.api.servlet.upload.server;
 import com.tugalsan.api.function.client.TGS_Func_OutTyped_In3;
 import com.tugalsan.api.file.server.TS_DirectoryUtils;
 import com.tugalsan.api.file.server.TS_FileUtils;
+import com.tugalsan.api.function.client.TGS_Func;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.servlet.upload.client.TGS_SUploadUtils;
-import com.tugalsan.api.stream.client.TGS_StreamUtils;
 import com.tugalsan.api.unsafe.client.*;
 import com.tugalsan.api.url.client.TGS_Url;
 import com.tugalsan.api.url.client.TGS_UrlUtils;
@@ -149,7 +149,7 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
     private static void println(HttpServletResponse rs, String msg) {
         TGS_UnSafe.run(() -> {
             rs.getWriter().println(msg);
-        }, e -> TGS_StreamUtils.runNothing());
+        }, e -> TGS_Func.empty.run());
     }
 
 }

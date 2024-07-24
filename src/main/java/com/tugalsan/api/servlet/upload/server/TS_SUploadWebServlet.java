@@ -55,8 +55,8 @@ public class TS_SUploadWebServlet extends HttpServlet {
             //                .resolve(TGS_SUploadUtils.LOC_NAME);
             //    }
 
-            var servletPack = SYNC;
-            if (servletPack != null) {
+            var servletPack = SYNC; 
+            if (servletPack != null) { 
                 if (config.enableTimeout) {
                     var await = TS_ThreadAsyncAwait.runUntil(killTrigger, servletPack.timeout(), exe -> {
                         TGS_UnSafe.run(() -> {
