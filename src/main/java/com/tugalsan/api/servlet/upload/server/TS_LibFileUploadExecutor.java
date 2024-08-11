@@ -17,7 +17,7 @@ import org.apache.commons.fileupload.servlet.*;
 
 public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
 
-    final private static TS_Log d = TS_Log.of(true, TS_LibFileUploadExecutor.class);
+    final private static TS_Log d = TS_Log.of(TS_LibFileUploadExecutor.class);
 
     protected TS_LibFileUploadExecutor(TGS_Func_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request) {
         this.target_by_profile_and_filename_and_request = target_by_profile_and_filename_and_request;
