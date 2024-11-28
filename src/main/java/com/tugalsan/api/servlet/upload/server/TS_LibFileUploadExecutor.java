@@ -17,7 +17,7 @@ import org.apache.commons.fileupload.servlet.*;
 
 public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
 
-    final private static TS_Log d = TS_Log.of(TS_LibFileUploadExecutor.class);
+    final private static TS_Log d = TS_Log.of(true, TS_LibFileUploadExecutor.class);
 
     protected TS_LibFileUploadExecutor(TGS_Func_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request) {
         this.target_by_profile_and_filename_and_request = target_by_profile_and_filename_and_request;
@@ -62,6 +62,7 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
                     d.ce("run", "items.isEmpty()");
                 }
                 items.forEach(item -> {
+                    d.ci("run", "items.forEach... BEGIN");
                     if (item.isFormField()) {
                         d.ci("run", "field", "name", item.getFieldName());
                         d.ci("run", "field", "value", item.getString());
@@ -76,6 +77,7 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
                             item.write(uploadedFile);
                          */
                     }
+                    d.ci("run", "items.forEach... END");
                 });
             }
 
@@ -85,6 +87,8 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_PROFILE_NULL());
                 return;
             }
+            d.ci("run", "profile", "selected");
+
             var profileValue = profile.getString();
             if (profileValue == null) {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_PROFILEVALUE_NULL());
@@ -97,6 +101,7 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_PROFILEVALUE_NULL());
                 return;
             }
+            d.ci("run", "profileValue", "hack check successfull");
 
             //GETING SOURCEFILE
             var sourceFile = items.stream().filter(item -> !item.isFormField()).findFirst().orElse(null);
@@ -104,6 +109,8 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_SOURCEFILE_NULL());
                 return;
             }
+            d.ci("run", "sourceFile", "selected");
+
             var sourceFileName = sourceFile.getName();
             if (sourceFileName == null) {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_SOURCEFILENAME_NULL());
@@ -118,6 +125,7 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_TARGETCOMPILED_NULL());
                 return;
             }
+            d.ci("run", "targetFile", targetFile);
 
             //ALREADY EXISTS?
             if (TS_FileUtils.isExistFile(targetFile)) {
@@ -148,6 +156,7 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
 
     private static void println(HttpServletResponse rs, String msg) {
         TGS_UnSafe.run(() -> {
+            d.cr("println", msg);
             rs.getWriter().println(msg);
         }, e -> TGS_Func.empty.run());
     }
