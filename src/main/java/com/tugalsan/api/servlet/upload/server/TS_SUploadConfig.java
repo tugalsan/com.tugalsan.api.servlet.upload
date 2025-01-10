@@ -5,6 +5,7 @@ import com.tugalsan.api.file.server.TS_DirectoryUtils;
 import com.tugalsan.api.file.server.TS_FileUtils;
 import com.tugalsan.api.file.txt.server.TS_FileTxtUtils;
 import com.tugalsan.api.log.server.TS_Log;
+import com.tugalsan.api.union.client.TGS_UnionExcuse;
 import com.tugalsan.api.unsafe.client.TGS_UnSafe;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -67,7 +68,7 @@ public class TS_SUploadConfig implements Serializable {
         enableTimeout = (Boolean) prop.getOrDefault("enableTimeout", enableTimeout);
     }
 
-    public static TS_SUploadConfig of(Path dir, String appName) {
+    public static TGS_UnionExcuse<TS_SUploadConfig> of(Path dir, String appName) {
         TS_DirectoryUtils.assureExists(dir);
         var filePath = dir.resolve(TS_SUploadConfig.class.getSimpleName() + "." + appName + ".json");
         d.cr("of", filePath);
