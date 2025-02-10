@@ -12,7 +12,7 @@ module com.tugalsan.api.servlet.upload {
     requires com.tugalsan.api.thread;
     requires com.tugalsan.api.file.json;
     requires com.tugalsan.api.file.txt;
-    requires com.tugalsan.api.unsafe;
+    
     requires com.tugalsan.api.stream;
     requires com.tugalsan.api.tomcat;
     exports com.tugalsan.api.servlet.upload.client;

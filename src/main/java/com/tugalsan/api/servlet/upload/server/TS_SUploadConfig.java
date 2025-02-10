@@ -6,7 +6,7 @@ import com.tugalsan.api.file.server.TS_FileUtils;
 import com.tugalsan.api.file.txt.server.TS_FileTxtUtils;
 import com.tugalsan.api.log.server.TS_Log;
 import com.tugalsan.api.union.client.TGS_UnionExcuse;
-import com.tugalsan.api.unsafe.client.TGS_UnSafe;
+import com.tugalsan.api.function.client.maythrow.checkedexceptions.TGS_FuncMTCEUtils;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -80,7 +80,7 @@ public class TS_SUploadConfig implements Serializable {
             TS_FileJsonUtils.toFile(jsonString, filePath, false, true);
         }
 
-        var jsonString = TGS_UnSafe.call(() -> TS_FileTxtUtils.toString(filePath), e -> {
+        var jsonString = TGS_FuncMTCEUtils.call(() -> TS_FileTxtUtils.toString(filePath), e -> {
             d.ct("of", e);
             d.cr("of", "writing default file");
             var tmp = TS_SUploadConfig.of();
