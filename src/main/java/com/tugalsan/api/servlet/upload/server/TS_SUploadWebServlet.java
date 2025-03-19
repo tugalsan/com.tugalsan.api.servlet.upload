@@ -25,8 +25,12 @@ public class TS_SUploadWebServlet extends HttpServlet {
     final public static int UPLOAD_MB_LIMIT_FILE = 25;
     final public static int UPLOAD_MB_LIMIT_REQUESTBALL = 50;
     final private static TS_Log d = TS_Log.of(false, TS_SUploadWebServlet.class);
-    public static volatile TS_ThreadSyncTrigger killTrigger = null;
+    private static volatile TS_ThreadSyncTrigger killTrigger = null;
     public static volatile TS_SUploadConfig config = TS_SUploadConfig.of();
+    
+    public static void warmUp(TS_ThreadSyncTrigger killTrigger){
+        TS_SUploadWebServlet.killTrigger = killTrigger;
+    }
 
     @Override
     public void doGet(HttpServletRequest rq, HttpServletResponse rs) {
