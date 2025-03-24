@@ -1,6 +1,6 @@
 package com.tugalsan.api.servlet.upload.server;
 
-import com.tugalsan.api.function.client.maythrow.checkedexceptions.TGS_FuncMTCEUtils;
+import com.tugalsan.api.function.client.maythrowexceptions.checked.TGS_FuncMTCUtils;
 import javax.servlet.http.*;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.servlet.upload.client.TGS_SUploadUtils;
@@ -43,7 +43,7 @@ public class TS_SUploadWebServlet extends HttpServlet {
     }
 
     public static void call(HttpServlet servlet, HttpServletRequest rq, HttpServletResponse rs) {
-        TGS_FuncMTCEUtils.run(() -> {
+        TGS_FuncMTCUtils.run(() -> {
             var appPath = rq.getServletContext().getRealPath("");// constructs path of the directory to save uploaded file
             var savePath = appPath + File.separator + TGS_SUploadUtils.LOC_NAME;// creates the save directory if it does not exists
             var fileSaveDir = new File(savePath);
@@ -64,7 +64,7 @@ public class TS_SUploadWebServlet extends HttpServlet {
             if (servletPack != null) { 
                 if (config.enableTimeout) {
                     var await = TS_ThreadAsyncAwait.runUntil(killTrigger.newChild(d.className), servletPack.timeout(), exe -> {
-                        TGS_FuncMTCEUtils.run(() -> {
+                        TGS_FuncMTCUtils.run(() -> {
                             servletPack.run(servlet, rq, rs);
                         }, e -> d.ct("call.await", e));
                     });
@@ -78,7 +78,7 @@ public class TS_SUploadWebServlet extends HttpServlet {
                         return;
                     }
                 } else {
-                    TGS_FuncMTCEUtils.run(() -> {
+                    TGS_FuncMTCUtils.run(() -> {
                         servletPack.run(servlet, rq, rs);
                     }, e -> d.ct("call", e));
                 }

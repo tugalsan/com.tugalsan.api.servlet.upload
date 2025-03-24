@@ -1,6 +1,6 @@
 package com.tugalsan.api.servlet.upload.server;
 
-import com.tugalsan.api.function.client.maythrow.uncheckedexceptions.TGS_FuncMTUCE_OutTyped_In3;
+import com.tugalsan.api.function.client.maythrowexceptions.unchecked.TGS_FuncMTU_OutTyped_In3;
 import com.tugalsan.api.file.server.TS_DirectoryUtils;
 import com.tugalsan.api.file.server.TS_FileUtils;
 import com.tugalsan.api.log.server.*;
@@ -13,17 +13,17 @@ import javax.servlet.annotation.*;
 import javax.servlet.http.*;
 import org.apache.commons.fileupload.disk.*;
 import org.apache.commons.fileupload.servlet.*;
-import com.tugalsan.api.function.client.maythrow.uncheckedexceptions.TGS_FuncMTUCE;
-import com.tugalsan.api.function.client.maythrow.checkedexceptions.TGS_FuncMTCEUtils;
+import com.tugalsan.api.function.client.maythrowexceptions.unchecked.TGS_FuncMTU;
+import com.tugalsan.api.function.client.maythrowexceptions.checked.TGS_FuncMTCUtils;
 
 public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
 
     final private static TS_Log d = TS_Log.of(true, TS_LibFileUploadExecutor.class);
 
-    protected TS_LibFileUploadExecutor(TGS_FuncMTUCE_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request) {
+    protected TS_LibFileUploadExecutor(TGS_FuncMTU_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request) {
         this.target_by_profile_and_filename_and_request = target_by_profile_and_filename_and_request;
     }
-    final public TGS_FuncMTUCE_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request;
+    final public TGS_FuncMTU_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request;
 
     @WebListener
     public static class ApacheFileCleanerCleanup extends FileCleanerCleanup {
@@ -32,7 +32,7 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
 
     @Override
     public void run(HttpServlet servlet, HttpServletRequest rq, HttpServletResponse rs) {
-        TGS_FuncMTCEUtils.run(() -> {
+        TGS_FuncMTCUtils.run(() -> {
             if (!ServletFileUpload.isMultipartContent(rq)) {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_NOT_MULTIPART());
                 return;
@@ -156,10 +156,10 @@ public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
     }
 
     private static void println(HttpServletResponse rs, String msg) {
-        TGS_FuncMTCEUtils.run(() -> {
+        TGS_FuncMTCUtils.run(() -> {
             d.cr("println", msg);
             rs.getWriter().println(msg);
-        }, e -> TGS_FuncMTUCE.empty.run());
+        }, e -> TGS_FuncMTU.empty.run());
     }
 
 }
