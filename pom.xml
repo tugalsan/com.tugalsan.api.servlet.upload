@@ -21,7 +21,7 @@
                     <artifactId>commons-io</artifactId>
                 </exclusion>
             </exclusions>
-            <version>1.5</version><!-- can be updated to 1.6.0 -->
+            <version>1.6.0</version><!-- 1.5 was working -->
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
