@@ -16,6 +16,7 @@ import org.apache.commons.fileupload.servlet.*;
 import com.tugalsan.api.function.client.maythrowexceptions.unchecked.TGS_FuncMTU;
 import com.tugalsan.api.function.client.maythrowexceptions.checked.TGS_FuncMTCUtils;
 
+/*can be renamed from TS_LibFileUploadExecutor to TS_SUploadExecutor_ImplementationWithProfile */
 public class TS_LibFileUploadExecutor extends TS_SUploadExecutor {
 
     final private static TS_Log d = TS_Log.of(true, TS_LibFileUploadExecutor.class);
