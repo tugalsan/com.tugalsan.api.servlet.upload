@@ -17,7 +17,7 @@ public class TS_SUploadUtils {
 
     public static void bind(TS_ThreadSyncTrigger killTrigger, TGS_FuncMTU_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_formField_and_fileName_and_request) {
         TS_SUploadWebServlet.warmUp(killTrigger.newChild(d.className).newChild("bind").newChild("warmpUp"));
-        TS_SUploadWebServlet.SYNC = new TS_LibFileUploadExecutor(target_by_formField_and_fileName_and_request);
+        TS_SUploadWebServlet.SYNC = new TS_SUploadExecutor_DefaultImplementation(target_by_formField_and_fileName_and_request);
     }
 
     public static TGS_Url url(HttpServletRequest request) {
