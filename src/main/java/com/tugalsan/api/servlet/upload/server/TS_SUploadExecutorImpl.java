@@ -11,16 +11,15 @@ import javax.servlet.annotation.*;
 import javax.servlet.http.*;
 import org.apache.commons.fileupload.disk.*;
 import org.apache.commons.fileupload.servlet.*;
-import com.tugalsan.api.function.client.*;
 import com.tugalsan.api.function.client.maythrowexceptions.checked.*;
 import com.tugalsan.api.function.client.maythrowexceptions.unchecked.*;
 
 /*can be renamed from TS_LibFileUploadExecutor to TS_SUploadExecutor_ImplementationWithProfile */
-public class TS_SUploadExecutor_DefaultImplementation extends TS_SUploadExecutor {
+public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
 
-    final private static TS_Log d = TS_Log.of(true, TS_SUploadExecutor_DefaultImplementation.class);
+    final private static TS_Log d = TS_Log.of(true, TS_SUploadImplDefault.class);
 
-    protected TS_SUploadExecutor_DefaultImplementation(TGS_FuncMTU_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request) {
+    protected TS_SUploadExecutorImpl(TGS_FuncMTU_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request) {
         this.target_by_profile_and_filename_and_request = target_by_profile_and_filename_and_request;
     }
     final public TGS_FuncMTU_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request;
