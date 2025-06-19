@@ -17,7 +17,7 @@ import com.tugalsan.api.function.client.maythrowexceptions.unchecked.*;
 /*can be renamed from TS_LibFileUploadExecutor to TS_SUploadExecutor_ImplementationWithProfile */
 public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
 
-    final private static TS_Log d = TS_Log.of(true, TS_SUploadImplDefault.class);
+    final private static TS_Log d = TS_Log.of(true, TS_SUploadExecutorImpl.class);
 
     protected TS_SUploadExecutorImpl(TGS_FuncMTU_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request) {
         this.target_by_profile_and_filename_and_request = target_by_profile_and_filename_and_request;
