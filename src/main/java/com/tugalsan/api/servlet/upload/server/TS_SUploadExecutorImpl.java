@@ -32,6 +32,7 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
     @Override
     public void run(HttpServlet servlet, HttpServletRequest rq, HttpServletResponse rs) {
         TGS_FuncMTCUtils.run(() -> {
+            //CHECK IF REQUEST IS MULTIPART
             if (!ServletFileUpload.isMultipartContent(rq)) {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_NOT_MULTIPART());
                 return;
@@ -57,6 +58,7 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
             //WARNING: Dont touch request before this, like execution getParameter or such!
             var items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(rq);
 
+            //DEBUG
             if (d.infoEnable) {
                 if (items.isEmpty()) {
                     d.ce("run", "items.isEmpty()");
@@ -81,7 +83,7 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
                 });
             }
 
-            //GETTING PROFILE
+            //GETTING PROFILE OBJECT
             var profile = items.stream().filter(item -> item.isFormField()).findFirst().orElse(null);
             if (profile == null) {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_PROFILE_NULL());
@@ -89,6 +91,7 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
             }
             d.ci("run", "profile", "selected");
 
+            //GETTING PROFILE VALUE
             var profileValue = profile.getString();
             if (profileValue == null) {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_PROFILEVALUE_NULL());
@@ -103,7 +106,7 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
             }
             d.ci("run", "profileValue", "hack check successfull");
 
-            //GETING SOURCEFILE
+            //GETING SOURCEFILE OBJECT
             var sourceFile = items.stream().filter(item -> !item.isFormField()).findFirst().orElse(null);
             if (sourceFile == null) {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_SOURCEFILE_NULL());
@@ -111,6 +114,7 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
             }
             d.ci("run", "sourceFile", "selected");
 
+            //GETING SOURCEFILE NAME
             var sourceFileName = sourceFile.getName();
             if (sourceFileName == null) {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_SOURCEFILENAME_NULL());
@@ -119,33 +123,28 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
             d.ci("run", "sourceFileName", sourceFileName);
 
             //COMPILING TARGET FILE
-            var targetFile = target_by_profile_and_filename_and_request.call(profileValue, sourceFileName, rq);
-            d.ci("run", "targetFile", targetFile, "profileValue", profileValue, "sourceFileName", sourceFileName);
-            if (targetFile == null) {
+            var pathFileTarget = target_by_profile_and_filename_and_request.call(profileValue, sourceFileName, rq);
+            d.ci("run", "pathFileTarget", pathFileTarget, "profileValue", profileValue, "sourceFileName", sourceFileName);
+            if (pathFileTarget == null) {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_TARGETCOMPILED_NULL());
                 return;
             }
-            d.ci("run", "targetFile", targetFile);
+            d.ci("run", "pathFileTarget", pathFileTarget);
 
-            //ALREADY EXISTS?
-            if (TS_FileUtils.isExistFile(targetFile)) {
-//                if (overwrite) {
-//                    TS_FileUtils.deleteFileIfExists(targetFile);
-//                }
-                if (TS_FileUtils.isExistFile(targetFile)) {
+            //CHECK IF TARGET FILE ALREADY EXISTS
+            if (TS_FileUtils.isExistFile(pathFileTarget)) {
+                if (TS_FileUtils.isExistFile(pathFileTarget)) {
                     println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_TARGETFILE_EXISTS());
                     return;
                 }
             }
 
-            //CREATE DIRECTORIES
-            TS_DirectoryUtils.assureExists(targetFile.getParent());
+            //SAVE FILE
+            TS_DirectoryUtils.assureExists(pathFileTarget.getParent());
+            TS_FileUtils.createFile(pathFileTarget);
+            sourceFile.write(pathFileTarget.toFile());
 
-            //UPLOAD FILE
-            TS_FileUtils.createFile(targetFile);
-            sourceFile.write(targetFile.toFile());
-
-            //SEND SUCCESSFULL
+            //SEND SUCCESSFULL FLAG
             rs.setStatus(HttpServletResponse.SC_CREATED);
             println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_SUCCESS());
         }, e -> {

@@ -1,13 +1,13 @@
 package com.tugalsan.api.servlet.upload.server;
 
+import com.tugalsan.api.file.server.TS_DirectoryUtils;
 import com.tugalsan.api.function.client.maythrowexceptions.checked.TGS_FuncMTCUtils;
 import javax.servlet.http.*;
 import com.tugalsan.api.log.server.*;
 import com.tugalsan.api.servlet.upload.client.TGS_SUploadUtils;
 import com.tugalsan.api.thread.server.async.await.TS_ThreadAsyncAwait;
 import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
-
-import java.io.File;
+import java.nio.file.Path;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 
@@ -16,7 +16,7 @@ import javax.servlet.annotation.WebServlet;
         fileSizeThreshold = 1024 * 1024 * TS_SUploadWebServlet.UPLOAD_MB_LIMIT_MEMORY,
         maxFileSize = 1024 * 1024 * TS_SUploadWebServlet.UPLOAD_MB_LIMIT_FILE,
         maxRequestSize = 1024 * 1024 * TS_SUploadWebServlet.UPLOAD_MB_LIMIT_REQUESTBALL,
-        location = "/" + TGS_SUploadUtils.LOC_NAME//means C:/bin/tomcat/home/work/Catalina/localhost/spi-xxx/upload (do create it)
+        location = "/" + TGS_SUploadUtils.LOC_NAME//means C:/bin/tomcat/home/work/Catalina/localhost/spi-xxx/upload (do create it when implementing)
 )
 public class TS_SUploadWebServlet extends HttpServlet {
 
@@ -27,8 +27,8 @@ public class TS_SUploadWebServlet extends HttpServlet {
     final private static TS_Log d = TS_Log.of(false, TS_SUploadWebServlet.class);
     private static volatile TS_ThreadSyncTrigger killTrigger = null;
     public static volatile TS_SUploadConfig config = TS_SUploadConfig.of();
-    
-    public static void warmUp(TS_ThreadSyncTrigger killTrigger){
+
+    public static void warmUp(TS_ThreadSyncTrigger killTrigger) {
         TS_SUploadWebServlet.killTrigger = killTrigger;
     }
 
@@ -44,24 +44,13 @@ public class TS_SUploadWebServlet extends HttpServlet {
 
     public static void call(HttpServlet servlet, HttpServletRequest rq, HttpServletResponse rs) {
         TGS_FuncMTCUtils.run(() -> {
-            var appPath = rq.getServletContext().getRealPath("");// constructs path of the directory to save uploaded file
-            var savePath = appPath + File.separator + TGS_SUploadUtils.LOC_NAME;// creates the save directory if it does not exists
-            var fileSaveDir = new File(savePath);
-            if (!fileSaveDir.exists()) {
-                fileSaveDir.mkdir();
-            }
-            //    public static TGS_UnionExcuseVoid preRequest(Path tmp) {
-            //        return TS_DirectoryUtils.createDirectoriesIfNotExists(tmp);
-            //    }
-            //
-            //    public static Path tmp(String appName) {
-            //        return TS_TomcatPathUtils.getPathTomcat().resolve("work")
-            //                .resolve("Catalina").resolve("localhost").resolve(appName)
-            //                .resolve(TGS_SUploadUtils.LOC_NAME);
-            //    }
+            //PREREQUEST - CREATE SAVE DIR
+            var pathDirApp = Path.of(rq.getServletContext().getRealPath(""));
+            var pathDirSave = pathDirApp.resolve(TGS_SUploadUtils.LOC_NAME);//TS_TomcatPathUtils.getPathTomcat().resolve("work").resolve("Catalina").resolve("localhost").resolve(appName).resolve(TGS_SUploadUtils.LOC_NAME);
+            TS_DirectoryUtils.assureExists(pathDirSave);
 
-            var servletPack = SYNC; 
-            if (servletPack != null) { 
+            var servletPack = SYNC;
+            if (servletPack != null) {
                 if (config.enableTimeout) {
                     var await = TS_ThreadAsyncAwait.runUntil(killTrigger.newChild(d.className), servletPack.timeout(), exe -> {
                         TGS_FuncMTCUtils.run(() -> {
