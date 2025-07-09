@@ -11,11 +11,13 @@ import javax.servlet.annotation.*;
 import javax.servlet.http.*;
 import com.tugalsan.api.function.client.maythrowexceptions.checked.*;
 import com.tugalsan.api.function.client.maythrowexceptions.unchecked.*;
-import java.util.List;
-import org.apache.commons.fileupload2.core.FileItem;
-import org.apache.commons.fileupload2.core.DiskFileItemFactory;
-import org.apache.commons.fileupload2.javax.JavaxFileCleaner;
-import org.apache.commons.fileupload2.javax.JavaxServletFileUpload;
+//import java.util.List;
+//import org.apache.commons.fileupload2.core.FileItem;
+//import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+//import org.apache.commons.fileupload2.javax.JavaxFileCleaner;
+//import org.apache.commons.fileupload2.javax.JavaxServletFileUpload;
+import org.apache.commons.fileupload.disk.*;
+import org.apache.commons.fileupload.servlet.*;
 
 /*can be renamed from TS_LibFileUploadExecutor to TS_SUploadExecutor_ImplementationWithProfile */
 public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
@@ -28,7 +30,9 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
     final public TGS_FuncMTU_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request;
 
     @WebListener
-    public static class ApacheFileCleanerCleanup extends JavaxFileCleaner {
+//    public static class ApacheFileCleanerCleanup extends JavaxFileCleaner {
+    public static class ApacheFileCleanerCleanup extends FileCleanerCleanup {
+
 
     }
 
@@ -36,32 +40,19 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
     public void run(HttpServlet servlet, HttpServletRequest rq, HttpServletResponse rs) {
         TGS_FuncMTCUtils.run(() -> {
             //CHECK IF REQUEST IS MULTIPART
-            if (!JavaxServletFileUpload.isMultipartContent(rq)) {
+//            if (!JavaxServletFileUpload.isMultipartContent(rq)) {
+            if (!ServletFileUpload.isMultipartContent(rq)) {
                 println(rs, "USER_NOT_MULTIPART");
                 return;
             }
 
-//            //SINGLEPART
-//            for (var part : servletUrlHandler.rq.getParts()) {
-//                var fileName = extractFileName(part);
-//                fileName = new File(fileName).getName();// refines the fileName in case it is an absolute path
-//                part.write(savePath + File.separator + fileName);
-//            }
-//    private static String extractFileName(Part part) {
-//        var contentDisp = part.getHeader("content-disposition");
-//        var items = contentDisp.split(";");
-//        for (var s : items) {
-//            if (s.trim().startsWith("filename")) {
-//                return s.substring(s.indexOf("=") + 2, s.length() - 1);
-//            }
-//        }
-//        return "";
-//    }
             //GETING ITEMS
             //WARNING: Dont touch request before this, like execution getParameter or such!
-            var fileFactory = DiskFileItemFactory.builder().get();
-            var fileUpload = new JavaxServletFileUpload(fileFactory);
-            List<FileItem> fileItems = fileUpload.parseRequest(rq);
+//            var fileFactory = DiskFileItemFactory.builder().get();
+//            var fileUpload = new JavaxServletFileUpload(fileFactory);
+//            List<FileItem> fileItems = fileUpload.parseRequest(rq);
+            var fileItems = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(rq);
+
 
             //DEBUG
             if (d.infoEnable) {
@@ -151,7 +142,9 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
             //SAVE FILE
             TS_DirectoryUtils.assureExists(pathFileTarget.getParent());
             TS_FileUtils.createFile(pathFileTarget);
-            sourceFile.write(pathFileTarget);
+//            sourceFile.write(pathFileTarget);
+            sourceFile.write(pathFileTarget.toFile());
+
 
             //SEND SUCCESSFULL FLAG
             rs.setStatus(HttpServletResponse.SC_CREATED);
