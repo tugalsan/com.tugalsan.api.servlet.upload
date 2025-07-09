@@ -1,7 +1,8 @@
 module com.tugalsan.api.servlet.upload {
     requires javax.servlet.api;
     
-    requires commons.fileupload;//org.apache.commons.fileupload;//;
+    requires org.apache.commons.fileupload2.core;//requires commons.fileupload;
+    requires org.apache.commons.fileupload2.javax;//requires commons.fileupload;
     requires org.apache.commons.io;
     
     requires com.tugalsan.api.function;

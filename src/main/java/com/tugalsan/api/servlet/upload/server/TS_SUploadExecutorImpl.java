@@ -9,10 +9,13 @@ import com.tugalsan.api.url.client.TGS_UrlUtils;
 import java.nio.file.Path;
 import javax.servlet.annotation.*;
 import javax.servlet.http.*;
-import org.apache.commons.fileupload.disk.*;
-import org.apache.commons.fileupload.servlet.*;
 import com.tugalsan.api.function.client.maythrowexceptions.checked.*;
 import com.tugalsan.api.function.client.maythrowexceptions.unchecked.*;
+import java.util.List;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+import org.apache.commons.fileupload2.javax.JavaxFileCleaner;
+import org.apache.commons.fileupload2.javax.JavaxServletFileUpload;
 
 /*can be renamed from TS_LibFileUploadExecutor to TS_SUploadExecutor_ImplementationWithProfile */
 public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
@@ -25,7 +28,7 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
     final public TGS_FuncMTU_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request;
 
     @WebListener
-    public static class ApacheFileCleanerCleanup extends FileCleanerCleanup {
+    public static class ApacheFileCleanerCleanup extends JavaxFileCleaner {
 
     }
 
@@ -33,8 +36,8 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
     public void run(HttpServlet servlet, HttpServletRequest rq, HttpServletResponse rs) {
         TGS_FuncMTCUtils.run(() -> {
             //CHECK IF REQUEST IS MULTIPART
-            if (!ServletFileUpload.isMultipartContent(rq)) {
-                println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_NOT_MULTIPART());
+            if (!JavaxServletFileUpload.isMultipartContent(rq)) {
+                println(rs, "USER_NOT_MULTIPART");
                 return;
             }
 
@@ -56,35 +59,41 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
 //    }
             //GETING ITEMS
             //WARNING: Dont touch request before this, like execution getParameter or such!
-            var items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(rq);
+            var fileFactory = DiskFileItemFactory.builder().get();
+            var fileUpload = new JavaxServletFileUpload(fileFactory);
+            List<FileItem> fileItems = fileUpload.parseRequest(rq);
 
             //DEBUG
             if (d.infoEnable) {
-                if (items.isEmpty()) {
+                if (fileItems.isEmpty()) {
                     d.ce("run", "items.isEmpty()");
                 }
-                items.forEach(item -> {
-                    d.ci("run", "items.forEach... BEGIN");
-                    if (item.isFormField()) {
-                        d.ci("run", "field", "name", item.getFieldName());
-                        d.ci("run", "field", "value", item.getString());
-                    } else {
-                        d.ci("run", "file", "fieldName", item.getFieldName());
-                        d.ci("run", "file", "fileName", item.getName());
-                        d.ci("run", "file", "contentType", item.getContentType());
-                        d.ci("run", "file", "isInMemory", item.isInMemory());
-                        d.ci("run", "file", "sizeInBytes", item.getSize());
-                        /*
+                fileItems.forEach(item -> {
+                    TGS_FuncMTCUtils.run(() -> {
+                        d.ci("run", "items.forEach... BEGIN");
+                        if (item.isFormField()) {
+                            d.ci("run", "field", "name", item.getFieldName());
+                            d.ci("run", "field", "value", item.getString());
+                        } else {
+                            d.ci("run", "file", "fieldName", item.getFieldName());
+                            d.ci("run", "file", "fileName", item.getName());
+                            d.ci("run", "file", "contentType", item.getContentType());
+                            d.ci("run", "file", "isInMemory", item.isInMemory());
+                            d.ci("run", "file", "sizeInBytes", item.getSize());
+                            /*
                         Path uploadedFile = Paths.get(...);
                             item.write(uploadedFile);
-                         */
-                    }
-                    d.ci("run", "items.forEach... END");
+                             */
+                        }
+                        d.ci("run", "items.forEach... END");
+                    }, e -> {
+                        d.ct("upload.forEach", e);
+                        println(rs, e.getMessage());
+                    });
                 });
             }
-
             //GETTING PROFILE OBJECT
-            var profile = items.stream().filter(item -> item.isFormField()).findFirst().orElse(null);
+            var profile = fileItems.stream().filter(item -> item.isFormField()).findFirst().orElse(null);
             if (profile == null) {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_PROFILE_NULL());
                 return;
@@ -107,7 +116,7 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
             d.ci("run", "profileValue", "hack check successfull");
 
             //GETING SOURCEFILE OBJECT
-            var sourceFile = items.stream().filter(item -> !item.isFormField()).findFirst().orElse(null);
+            var sourceFile = fileItems.stream().filter(item -> !item.isFormField()).findFirst().orElse(null);
             if (sourceFile == null) {
                 println(rs, TGS_SUploadUtils.RESULT_UPLOAD_USER_SOURCEFILE_NULL());
                 return;
@@ -142,7 +151,7 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
             //SAVE FILE
             TS_DirectoryUtils.assureExists(pathFileTarget.getParent());
             TS_FileUtils.createFile(pathFileTarget);
-            sourceFile.write(pathFileTarget.toFile());
+            sourceFile.write(pathFileTarget);
 
             //SEND SUCCESSFULL FLAG
             rs.setStatus(HttpServletResponse.SC_CREATED);
@@ -150,7 +159,8 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
         }, e -> {
             d.ct("upload", e);
             println(rs, e.getMessage());
-        });
+        }
+        );
     }
 
     private static void println(HttpServletResponse rs, String msg) {
