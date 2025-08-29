@@ -63,7 +63,7 @@ public class TS_SUploadWebServlet extends HttpServlet {
                         return;
                     }
                     if (await.hasError()) {
-                        d.ce("call", "ERROR(AWAIT)", await.exceptionIfFailed.get().getMessage());
+                        d.ce("call", "ERROR(AWAIT)", await.exceptionIfFailed().get().getMessage());
                         return;
                     }
                 } else {
