@@ -22,7 +22,7 @@ import org.apache.commons.fileupload.servlet.*;
 /*can be renamed from TS_LibFileUploadExecutor to TS_SUploadExecutor_ImplementationWithProfile */
 public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
 
-    final private static TS_Log d = TS_Log.of(true, TS_SUploadExecutorImpl.class);
+    final private static TS_Log d = TS_Log.of(TS_SUploadExecutorImpl.class);
 
     protected TS_SUploadExecutorImpl(TGS_FuncMTU_OutTyped_In3<Path, String, String, HttpServletRequest> target_by_profile_and_filename_and_request) {
         this.target_by_profile_and_filename_and_request = target_by_profile_and_filename_and_request;
@@ -32,7 +32,6 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
     @WebListener
 //    public static class ApacheFileCleanerCleanup extends JavaxFileCleaner {
     public static class ApacheFileCleanerCleanup extends FileCleanerCleanup {
-
 
     }
 
@@ -52,7 +51,6 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
 //            var fileUpload = new JavaxServletFileUpload(fileFactory);
 //            List<FileItem> fileItems = fileUpload.parseRequest(rq);
             var fileItems = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(rq);
-
 
             //DEBUG
             if (d.infoEnable) {
@@ -144,7 +142,6 @@ public class TS_SUploadExecutorImpl extends TS_SUploadExecutor {
             TS_FileUtils.createFile(pathFileTarget);
 //            sourceFile.write(pathFileTarget);
             sourceFile.write(pathFileTarget.toFile());
-
 
             //SEND SUCCESSFULL FLAG
             rs.setStatus(HttpServletResponse.SC_CREATED);

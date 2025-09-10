@@ -52,7 +52,7 @@ public class TS_SUploadWebServlet extends HttpServlet {
             var servletPack = SYNC;
             if (servletPack != null) {
                 if (config.enableTimeout) {
-                    var await = TS_ThreadAsyncAwait.runUntil(killTrigger.newChild(d.className), servletPack.timeout(), exe -> {
+                    var await = TS_ThreadAsyncAwait.runUntil(killTrigger.newChild(d.className()), servletPack.timeout(), exe -> {
                         TGS_FuncMTCUtils.run(() -> {
                             servletPack.run(servlet, rq, rs);
                         }, e -> d.ct("call.await", e));
