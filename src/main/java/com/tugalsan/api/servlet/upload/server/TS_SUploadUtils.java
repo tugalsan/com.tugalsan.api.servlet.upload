@@ -1,11 +1,11 @@
 package com.tugalsan.api.servlet.upload.server;
 
-import com.tugalsan.api.function.client.maythrowexceptions.unchecked.TGS_FuncMTU_OutTyped_In3;
-import com.tugalsan.api.log.server.TS_Log;
-import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
-import com.tugalsan.api.url.client.TGS_Url;
-import java.nio.file.Path;
-import javax.servlet.http.HttpServletRequest;
+import module com.tugalsan.api.url;
+import module com.tugalsan.api.log;
+import module com.tugalsan.api.thread;
+import module com.tugalsan.api.function;
+import module javax.servlet.api;
+import java.nio.file.*;
 
 public class TS_SUploadUtils {
 

@@ -1,15 +1,12 @@
 package com.tugalsan.api.servlet.upload.server;
 
-import com.tugalsan.api.file.server.TS_DirectoryUtils;
-import com.tugalsan.api.function.client.maythrowexceptions.checked.TGS_FuncMTCUtils;
-import javax.servlet.http.*;
-import com.tugalsan.api.log.server.*;
-import com.tugalsan.api.servlet.upload.client.TGS_SUploadUtils;
-import com.tugalsan.api.thread.server.async.await.TS_ThreadAsyncAwait;
-import com.tugalsan.api.thread.server.sync.TS_ThreadSyncTrigger;
-import java.nio.file.Path;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
+import module com.tugalsan.api.file;
+import module com.tugalsan.api.log;
+import module com.tugalsan.api.function;
+import module com.tugalsan.api.thread;
+import module javax.servlet.api;
+import module com.tugalsan.api.servlet.upload;
+import java.nio.file.*;
 
 @WebServlet("/" + TGS_SUploadUtils.LOC_NAME)//AS IN "/u"
 @MultipartConfig(//for TS_LibFileUploadUtils.upload that uses Apache.commons
